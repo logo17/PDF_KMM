@@ -33,7 +33,7 @@ actual class PDFTool(private val context: Context, private val docId: Int) {
             field.isReadOnly = true
             val baseDir = File(context.filesDir, "PDFs")
             if (!baseDir.exists()) baseDir.mkdir()
-            val newPdfFile = File(baseDir, "TEST23.pdf")
+            val newPdfFile = File(baseDir, "TEST1.pdf")
             document.save(newPdfFile)
             document.close()
             return FileProvider.getUriForFile(context, "com.example.fileprovider", newPdfFile).toString()
