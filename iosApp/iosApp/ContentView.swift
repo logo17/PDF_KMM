@@ -10,7 +10,8 @@ struct ContentView: View {
    init() {
        //for the sake of example, we're going to assume
        //you have a file Lipsum.pdf in your bundle
-       let url = URL(string: PDFTool(fileURL: Bundle.main.url(forResource: "form_test", withExtension: "pdf")!).generatedFilePath)!
+       let information = ["clientName": "Krizia Granados Arroyo", "amount": "145", "description": "Transportation fee", "dateMonthDay": "10-02", "dateYear": "23"]
+       let url = URL(string: PDFTool(fileURL: Bundle.main.url(forResource: "void_cheque", withExtension: "pdf")!, information: information).generatedFilePath)!
        let fileData = readDataFromUrl(with: url)
        
        pdfDoc = PDFDocument(data: fileData)!

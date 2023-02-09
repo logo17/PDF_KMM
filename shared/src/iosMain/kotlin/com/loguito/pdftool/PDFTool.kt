@@ -1,5 +1,6 @@
 package com.loguito.pdftool
 
+import platform.Foundation.NSDictionary
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSURL.Companion.URLWithString
@@ -9,7 +10,10 @@ import platform.PDFKit.PDFDocument
 import platform.PDFKit.fieldName
 import platform.PDFKit.widgetStringValue
 
-actual class PDFTool(private val fileURL: NSURL) {
+actual class PDFTool(
+    private val fileURL: NSURL,
+    private val information: NSDictionary
+    ) {
     actual val generatedFilePath: String = generateDoc()
 
     private fun generateDoc(): String {
@@ -21,9 +25,11 @@ actual class PDFTool(private val fileURL: NSURL) {
                     val annotations: List<PDFAnnotation> =
                         page.annotations as List<PDFAnnotation>
                     for (annotation in annotations) {
-                        if (annotation.fieldName == "FirstName") {
-                            annotation.widgetStringValue = "Filled Text Field"
-                            page.addAnnotation(annotation)
+                        annotation.fieldName?.let { fName ->
+                            information.objectForKey(fName)?.let { iValue ->
+                                annotation.widgetStringValue = iValue as String
+                                page.addAnnotation(annotation)
+                            }
                         }
                     }
                 }
