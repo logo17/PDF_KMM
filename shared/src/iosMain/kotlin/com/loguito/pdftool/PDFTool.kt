@@ -22,7 +22,7 @@ actual class PDFTool(private val fileURL: NSURL) {
                     for (annotation in annotations) {
                         annotation.fieldName?.let { fName ->
                             information[fName]?.let { iValue ->
-                                annotation.widgetStringValue = iValue as String
+                                annotation.widgetStringValue = iValue
                                 page.addAnnotation(annotation)
                             }
                         }
