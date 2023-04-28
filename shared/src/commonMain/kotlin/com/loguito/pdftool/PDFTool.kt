@@ -1,5 +1,5 @@
 package com.loguito.pdftool
 
 expect class PDFTool {
-    val generatedFilePath: String
+    fun fillForm(information: Map<String, String>): String
 }

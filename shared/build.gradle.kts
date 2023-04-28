@@ -1,6 +1,8 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("kotlin-parcelize")
+    id("kotlinx-serialization")
 }
 
 kotlin {
@@ -17,13 +19,22 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("androidx.core:core:1.9.0")
+                implementation("io.ktor:ktor-client-core:2.0.0-beta-1")
+                implementation("io.ktor:ktor-client-serialization:2.0.0-beta-1")
+                implementation("io.ktor:ktor-client-content-negotiation:2.0.0-beta-1")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0-beta-1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-logging:2.0.0-beta-1")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
-        val androidMain by getting
         val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -33,6 +44,14 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:2.0.0-beta-1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt") {
+                    version {
+                        strictly("1.6.0-native-mt")
+                    }
+                }
+            }
         }
         val iosX64Test by getting
         val iosArm64Test by getting
@@ -56,8 +75,6 @@ android {
     }
     dependencies {
         implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+        implementation("io.ktor:ktor-client-android:2.0.0-beta-1")
     }
-}
-dependencies {
-    implementation("androidx.core:core:1.9.0")
 }

@@ -3,23 +3,49 @@ import shared
 import PDFKit
 
 struct ContentView: View {
-	let greet = Greeting().greet()
-    
-    let pdfDoc: PDFDocument
-       
-   init() {
-       //for the sake of example, we're going to assume
-       //you have a file Lipsum.pdf in your bundle
-       let information = ["clientName": "Krizia Granados Arroyo", "amount": "145", "description": "Transportation fee", "dateMonthDay": "10-02", "dateYear": "23"]
-       let url = URL(string: PDFTool(fileURL: Bundle.main.url(forResource: "void_cheque", withExtension: "pdf")!, information: information).generatedFilePath)!
-       let fileData = readDataFromUrl(with: url)
-       
-       pdfDoc = PDFDocument(data: fileData)!
-   }
 
+    @StateObject var transactionViewModel = TransactionViewModel()
+
+    @State private var clientName: String = ""
+    @State private var amount: String = ""
+    @State private var description: String = ""
+    
 	var body: some View {
-//		Text(greet)
-        PDFKitView(showing: pdfDoc)
+        NavigationView {
+            VStack(alignment: HorizontalAlignment.center, spacing: 32){
+                
+                let userInfo = transactionViewModel.userInformation
+                
+                Text("Transfer Money")
+                
+                if(userInfo != nil) {
+                    VStack(alignment: HorizontalAlignment.leading, spacing: 4){
+                        Text("From:")
+                        Text("\((userInfo?.first_name)!) \((userInfo?.last_name)!)")
+                    }
+                }
+                
+                TextField(
+                    "Client name",
+                    text: $clientName
+                )
+                
+                TextField(
+                    "Amount",
+                    text: $amount
+                )
+                
+                TextField(
+                    "Description",
+                    text: $description
+                )
+                
+                NavigationLink(destination: PDFKitView(information: ["clientName": clientName, "amount": amount, "description": description, "dateMonthDay": "10-02", "dateYear": "23"])) {
+                                    Text("Submit")
+                                }
+            }
+            .padding(.init(top: 0, leading: 24, bottom: 0, trailing: 24))
+        }
 	}
 }
 
@@ -33,8 +59,10 @@ struct PDFKitView: UIViewRepresentable {
     
     let pdfDocument: PDFDocument
     
-    init(showing pdfDoc: PDFDocument) {
-        self.pdfDocument = pdfDoc
+    init(information: [String : String]) {
+        let url = URL(string: PDFTool(fileURL: Bundle.main.url(forResource: "void_cheque", withExtension: "pdf")!).fillForm(information: information))!
+        let fileData = readDataFromUrl(with: url)
+        self.pdfDocument = PDFDocument(data: fileData)!
     }
     
     //you could also have inits that take a URL or Data

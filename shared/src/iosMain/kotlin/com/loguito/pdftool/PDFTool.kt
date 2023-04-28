@@ -10,23 +10,18 @@ import platform.PDFKit.PDFDocument
 import platform.PDFKit.fieldName
 import platform.PDFKit.widgetStringValue
 
-actual class PDFTool(
-    private val fileURL: NSURL,
-    private val information: NSDictionary
-    ) {
-    actual val generatedFilePath: String = generateDoc()
-
-    private fun generateDoc(): String {
+actual class PDFTool(private val fileURL: NSURL) {
+    actual fun fillForm(information: Map<String, String>): String {
         val pdfDocument = PDFDocument(fileURL)
         val dataRepresentation = pdfDocument.dataRepresentation()
-        dataRepresentation?.let { data ->
+        dataRepresentation?.let {
             for (i in 0 until pdfDocument.pageCount.toInt()) {
                 pdfDocument.pageAtIndex(i.toULong())?.let { page ->
                     val annotations: List<PDFAnnotation> =
                         page.annotations as List<PDFAnnotation>
                     for (annotation in annotations) {
                         annotation.fieldName?.let { fName ->
-                            information.objectForKey(fName)?.let { iValue ->
+                            information[fName]?.let { iValue ->
                                 annotation.widgetStringValue = iValue as String
                                 page.addAnnotation(annotation)
                             }
@@ -39,5 +34,4 @@ actual class PDFTool(
         }
         return ""
     }
-
 }

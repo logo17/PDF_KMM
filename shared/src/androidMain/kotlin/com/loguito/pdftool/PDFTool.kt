@@ -16,12 +16,10 @@ import java.io.IOException
 
 actual class PDFTool(
     private val context: Context,
-    private val docId: Int,
-    private val annotations: Map<String, String>
+    private val docId: Int
     ) {
-    actual val generatedFilePath: String = generateDoc()
 
-    private fun generateDoc(): String {
+    actual fun fillForm(information: Map<String, String>): String {
         PDFBoxResourceLoader.init(context)
         try {
             // Load the document and get the AcroForm
@@ -31,17 +29,13 @@ actual class PDFTool(
             val acroForm: PDAcroForm = docCatalog.acroForm
 
             // Fill the text fields
-            annotations.map { entry ->
+            information.map { entry ->
                 val field: PDTextField = acroForm.getField(entry.key) as PDTextField
                 field.defaultAppearance = acroForm.defaultAppearance
                 field.value = entry.value
                 field.isReadOnly = true
             }
 
-//            val field: PDTextField = acroForm.getField("FirstName") as PDTextField
-//            field.defaultAppearance = acroForm.defaultAppearance
-//            field.value = "TEST"
-//            field.isReadOnly = true
             val baseDir = File(context.filesDir, "PDFs")
             if (!baseDir.exists()) baseDir.mkdir()
             val newPdfFile = File(baseDir, "FilledForm.pdf")
